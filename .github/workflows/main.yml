@@ -93,14 +93,3 @@ jobs:
                   version: ${{ needs.Build.outputs.version }}
                   release_stage: ${{ github.event.inputs.release_stage }}
                   addon_folder_name: toon_shade
-
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Release addon (No Updater)
-              uses: natapol2547/blender-addon-release@main
-              with:
-                  artifact_name: toon-shade-no-updater
-                  version: ${{ needs.Build.outputs.version }}
-                  release_stage: ${{ github.event.inputs.release_stage }}
-                  addon_folder_name: toon_shade
