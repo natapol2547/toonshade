@@ -14,7 +14,7 @@ class ToonShadePreferences(bpy.types.AddonPreferences):
 	auto_check_update = bpy.props.BoolProperty(
 		name="Auto-check for Update",
 		description="If enabled, auto-check for updates using an interval",
-		default=False)
+		default=True)
 
 	updater_interval_months = bpy.props.IntProperty(
 		name='Months',
@@ -84,8 +84,9 @@ class ToonShadePanel(bpy.types.Panel):
         # if not ts.check_ts_node_trees():
         #     col.operator("toonshade.import_nodetrees", icon='IMPORT', text="Import Toon Shade")
         #     return
-        for tree_name in TS_NODETREE_NAMES:
-            ops = col.operator("toonshade.add_node_tree", text=f"Add {tree_name}", icon='NODE_MATERIAL').node_tree_name = tree_name
+        col.menu("MAT_MT_ToonShadeAddNode", text="Add Node")
+        # for tree_name in TS_NODETREE_NAMES:
+        #     ops = col.operator("toonshade.add_node_tree", text=f"Add {tree_name}", icon='NODE_MATERIAL').node_tree_name = tree_name
             # ops = col.operator("node.add_node", text=f"Add {tree_name}", icon='NODE_MATERIAL')
             # ops.use_transform=True
             # ops.settings=[{"name": "node_tree", "value": f"bpy.data.node_groups['{tree_name}']"}]
@@ -101,26 +102,40 @@ class ToonShadePanel(bpy.types.Panel):
         col.scale_y = 1.5
         col.prop(ts.settings, "time_of_day")
         
-        goo_nodetree = bpy.data.node_groups.get("Toon Shade Goo")
-        if not goo_nodetree:
+        env_color_nodetree = bpy.data.node_groups.get("Environment Color")
+        if not env_color_nodetree:
             return
-        colorramp_node = find_node(goo_nodetree, {"name": "Toon Shade Color Ramp"})
-        if goo_nodetree.library:
-            box.label(text="Node is linked to a library")
-        else:
-            if colorramp_node:
-                box.label(text="Time of Day Colors:")
-                box.template_node_inputs(colorramp_node)
+        colorramp_node = find_node(env_color_nodetree, {"name": "Toon Shade Color Ramp"})
+        if colorramp_node:
+            box.label(text="Time of Day Colors:")
+            box.template_node_inputs(colorramp_node)
         
         layout.label(text="Shader Settings:")
         for ts_node in ts_nodes:
+            # Check if node has any input sockets
+            if not ts_node.inputs:
+                continue
             box = layout.box()
             box.template_node_inputs(ts_node)
+
+
+class MAT_MT_ToonShadeAddNode(bpy.types.Menu):
+    bl_label = "Add Toon Shade Node Menu"
+    bl_idname = "MAT_MT_ToonShadeAddNode"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Toon Shade Nodes:")
+        for idx, tree_name in enumerate(TS_NODETREE_NAMES):
+            col.operator("toonshade.add_node_tree", text=f"Add {tree_name}", icon='NODE_MATERIAL' if idx == 0 else 'NONE').node_tree_name = tree_name
 
 
 classes = (
     ToonShadePreferences,
     ToonShadePanel,
+    MAT_MT_ToonShadeAddNode,
 )
 
 register, unregister = register_classes_factory(classes)

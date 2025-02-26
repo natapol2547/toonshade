@@ -123,7 +123,7 @@ class TOONSHADE_OT_AddNodeTree(Operator):
 
     def execute(self, context):
         ts = ToonShade(context)
-        node_tree = ts.get_nodetree_from_library(self.node_tree_name, force_reload=False, link=self.link)
+        node_tree = ts.get_nodetree_from_library(self.node_tree_name, force_reload=True, link=self.link)
         if not node_tree:
             self.report({'ERROR'}, "No node tree found")
             return {'CANCELLED'}

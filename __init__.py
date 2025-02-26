@@ -19,7 +19,7 @@ bl_info = {
     "author": "Tawan Sunflower",
     "description": "",
     "blender": (4, 1, 0),
-    "version": (0, 0, 1),
+    "version": (0, 0, 2),
     "location": "View3D > Sidebar > Toon Shade",
     "warning": "",
     "category": "Node",
